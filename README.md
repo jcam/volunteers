@@ -45,4 +45,23 @@ If you want to use websockets for a couple extra features (auto-updating when sh
 4. Run ```node websocket-server.js``` within the **node** folder
 5. Use a ```screen``` session or a process manager like ```pm2``` to keep the websocket server running indefinitely
 
-  
+## Docker instructions
+
+Dependencies:
+1. ```docker```
+2. ```docker-compose```
+
+For development:
+1. Copy **.env.example** to **.env.testing**
+2. Run `sh dev-scripts/testrig.sh`
+
+The database should be accessible on localhost port 33061
+The site should be accessible at http://localhost:8080
+
+For production builds:
+1. Copy **.env.example** to **.env.prod**
+2. Run `docker-compose up -f docker-compose.yml -f docker-compose.prod.yml -d`
+ - if this fails, overwrite **docker-compose.override.yml** with **docker-compose.prod.yml**, and run `docker-compose up -d`
+3. Run `docker-compose exec app php artisan migrate`
+4. Run `docker-compose exec app php artisan db:seed`
+5. Run `docker-compose exec app php artisan key:generate` and copy the key into your .env.prod as APP_KEY
