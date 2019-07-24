@@ -19,9 +19,6 @@
         <h1 class="relative">
             Viewing Event: {{ $event->name }}
 
-            @if($event->featured)
-                <span class="burn glyphicon glyphicon-fire"></span>
-            @endif
         </h1>
         <hr>
 
@@ -42,6 +39,103 @@
         @if($event->description)
             <label>Description</label>
             <p>{!! nl2br(e($event->description)) !!}</p>
+        @endif
+
+        @if($event->featured)
+<?php 
+//set up ticketing status info
+$lottoComplete = DB::table('nectrtix.global')
+                     ->select(DB::raw("CASE WHEN ticketing_live = b'1' THEN 1 ELSE 0 END as lottery_complete"))
+                     ->first();
+
+$ticketStatusQuery = DB::table('nectrtix.users')
+                         ->crossJoin('nectrtix.global')
+                         ->select(DB::raw("firstname as fullname,dob,status,ticket_order as tid,(select count(*) from nectrtix.users where status = 'waitlist' and ticket_order < tid) + 1 as waitlist_count,CASE WHEN date_info<=signup_cutoff THEN 1 ELSE 0 END as is_in_lottery,CASE WHEN is_admin = b'1' OR is_board = b'1' THEN 1 ELSE 0 END as show_admin"))
+                         ->where('email',Auth::user()->email);
+
+$ticketStatusCount = $ticketStatusQuery->count();
+
+$ticketStatus = $ticketStatusQuery->first();
+
+      $longstatus = "";
+      switch ($ticketStatus->status) {
+      case 'waitlist':
+        if ($lottoComplete) {
+          $longstatus = "You're currently on the waitlist. Your waitlist position is $ticketStatus->waitlist_count. If you <b>DO NOT</b> want to go, <a href='/cgi-bin/ticketing.pl?action=I%20don%27t%20want%20a%20ticket&confirm=checked'>click here to <b>release</b> your spot</a>";
+        } elseif ($ticketStatus->is_in_lottery) {
+          $longstatus = "You're ready to be randomized!";
+        } else {
+          $longstatus = "You missed the lottery cutoff, but you'll be added to the waitlist soon!";
+        }
+        break;
+      case 'noinfo':
+        $longstatus = "You need to update your registration! <a href='/cgi-bin/ticketing.pl'>Go here to fill in your info!</a>";
+        break;
+      case 'unpaid':
+        $longstatus = "You have a ticket offer! <a href='/cgi-bin/ticketing.pl?target=sales'>Click here to purchase!</a><p>If you <b>DO NOT</b> want your ticket, <a href='/cgi-bin/ticketing.pl?action=I%20don%27t%20want%20a%20ticket&confirm=checked'> click here to <b>release</b> your ticket offer to the waitlist.</a>";
+        break;
+      case 'paid':
+        $longstatus = "You have paid for your ticket! See you in the woods! <a href='/cgi-bin/ticketing.pl?target=sales'>Click here to go back to the ticket sale page</a> (for refunds etc)";
+        break;
+      case 'nothanks':
+        $longstatus = "You have declined your ticket/waitlist registration. <a href='/cgi-bin/ticketing.pl?action=Put%20me%20back%20on%20the%20waitlist'>Click here to go back onto the waitlist</a> or <a href='mailto:nectr-tickets@tryfix.org'>Send us an email for help if you did this by mistake</a>";
+        break;
+      case 'refunded':
+        $longstatus = "You have refunded your ticket. <a href='/cgi-bin/ticketing.pl?action=Put%20me%20back%20on%20the%20waitlist'>Click here to go back onto the waitlist</a> or <a href='mailto:nectr-tickets@tryfix.org'>Send us an email for help if you did this by mistake</a>";
+        break;
+      case 'lapsed':
+        $longstatus = "You failed to pay for your ticket before the deadline in your ticket offer. <a href='/cgi-bin/ticketing.pl?action=Put%20me%20back%20on%20the%20waitlist'>Click here to go back onto the waitlist</a>";
+        break;
+      default:
+        $longstatus = $status;
+      }
+/*      switch ($status) {
+      case 'waitlist':
+        $longstatus = "You are on the waitlist. Unfortunately the event has already begun and no more tickets will be released. We hope you are able to join us next year!";
+        break;
+      case 'noinfo':
+        $longstatus = "You have not completed your registration with this email. Unfortunately the event has already begun and no more tickets will be released. We hope you are able to join us next year!";
+        break;
+      case 'unpaid':
+        $longstatus = "You are on the waitlist. Unfortunately the event has already begun and no more tickets will be released. We hope you are able to join us next year!";
+        break;
+      case 'paid':
+        $longstatus = "You have paid for your ticket! See you in the woods!";
+        break;
+      case 'nothanks':
+        $longstatus = "You have declined your ticket/waitlist registration.";
+        break;
+      case 'refunded':
+        $longstatus = "You have refunded your ticket.";
+        break;
+      case 'lapsed':
+        $longstatus = "You failed to pay for your ticket before the deadline in your ticket offer. Unfortunately the event has already begun and no more tickets will be released. We hope you are able to join us next year!";
+        break;
+      default:
+        $longstatus = $status;
+      }*/
+
+?>
+
+
+<?php if ($ticketStatusCount == 0) { ?>
+      <h3>You have not yet registered for a ticket! <a href="/cgi-bin/ticketing.pl">Click here to register!</a></h3>
+<?php } else { ?>
+      <div id="reginfo">
+        <h3>Ticket Registration Information (Must match your ID at gate!):</h3>
+        <h4><a href="https://www.fireflyartscollective.org/firefly/tickets/">Go here to read more about ticketing and find answers</a></h4>
+        <p>Name: <b><?php echo e($ticketStatus->fullname);?></b></p>
+        <p>Date of Birth: <b><?php echo e($ticketStatus->dob);?></b></p>
+        <p>Status: <b><?php echo $longstatus;?></b></p>
+<?php if (!$lottoComplete && $ticketStatus->is_in_lottery) { ?>
+        <p>Families and groups who must go together may group themselves to be randomized together<br>
+      Group: <b><?php echo $groupStatus;?></b> <a href="/cgi-bin/ticketing.pl?action=Manage%20Groups">Click here to manage groups</a></p>
+<?php } ?>
+<?php if ($ticketStatus->show_admin) { ?>
+        <p><a href="/cgi-bin/ticketing.pl?action=Secret%20Admin%20Interface">Click here for the ticketing admin panel</a></p>
+<?php } ?>
+      </div>
+<?php } ?>
         @endif
 
         @can('read-department')

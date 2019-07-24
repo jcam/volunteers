@@ -44,6 +44,12 @@ if($start_date->lt(\Carbon\Carbon::now()))
     }
 }
 
+
+if ($ticketStatusCount == 0 || $ticketStatus['waitlist_count'] > 30 && $ticketStatus['status'] == 'waitlist')
+{
+    $href = "";
+}
+
 ?>
 
 <span class="slot-wrap" data-start="{{ $slot->start_time }}" data-duration="{{ $schedule->duration }}" data-row="{{ $slot->row }}">
