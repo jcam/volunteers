@@ -16,9 +16,9 @@ use App\Helpers;
         @include('partials/form/text',
         [
             'name' => 'full_name',
-            'label' => 'Full Name',
-            'placeholder' => 'Your name in the Default World',
-            'help' => "Required. Your full name is used for reporting and ticketing purposes",
+            'label' => 'Preferred Full Name',
+            'placeholder' => 'Your preferred name in the Default World',
+            'help' => "Required. Your full name is used for reporting and volunteer listings",
             'value' => (is_null($user->data)) ? '' : $user->data->full_name
         ])
 
@@ -27,7 +27,7 @@ use App\Helpers;
             'name' => 'burner_name',
             'label' => 'Burner Name',
             'placeholder' => 'Your name on the Playa',
-            'help' => "This name will be shown to other users when you sign up for a shift",
+            'help' => "This name will be shown to other users when you sign up for a shift. Leave blank if you don't have one",
             'value' => Helpers::displayName($user)
         ])
 
@@ -66,7 +66,7 @@ use App\Helpers;
             'name' => 'birthday',
             'label' => 'Birthday',
             'placeholder' => 'YYYY-MM-DD',
-            'help' => 'This will only be used as a part of the event census',
+            'help' => 'This will only be used as a part of the event census and at the gate',
             'value' => (is_null($user->data)) ? '' : $user->data->birthday
         ])
 
