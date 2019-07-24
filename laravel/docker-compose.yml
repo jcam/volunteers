@@ -29,5 +29,7 @@ services:
     ports:
       - "33061:3306"
 
+  websocket:
+
 volumes:
   dbdata:
