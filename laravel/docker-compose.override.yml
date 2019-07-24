@@ -19,3 +19,9 @@ services:
       target: nginxbase
     volumes_from:
       - app
+
+  # The Websocket Server
+  websocket:
+    build:
+      context: ../node
+      dockerfile: websocket.dockerfile
