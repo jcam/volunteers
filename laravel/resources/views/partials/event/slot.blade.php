@@ -44,11 +44,14 @@ if($start_date->lt(\Carbon\Carbon::now()))
     }
 }
 
-
-if ($ticketStatusCount == 0 || $ticketStatus['waitlist_count'] > 30 && $ticketStatus['status'] == 'waitlist')
+// If the user doesn't have a ticket, don't let them sign up
+//@if($event->featured) <----- this doesn't work, but we don't want to check ticketing if not featured
+if (!$has_account || ($ticketStatus->status != 'unpaid' && $ticketStatus->status != 'paid'))
 {
     $href = "";
 }
+//  waitlist_count > 30 && $ticketStatus->status == 'waitlist' || $ticketStatus)
+//@endif
 
 ?>
 
