@@ -87,8 +87,11 @@ if($has_account) {
   case 'lapsed':
     $longstatus = "You failed to pay for your ticket before the deadline in your ticket offer. <a href='/cgi-bin/ticketing.pl?action=Put%20me%20back%20on%20the%20waitlist'>Click here to go back onto the waitlist</a>";
     break;
+  case 'minor':
+    $longstatus = "You are registered as a minor. Your parent or guardian will need to sign a waiver for you at the gate.";
+    break;
   default:
-    $longstatus = $status;
+    $longstatus = $ticketStatus->status;
   }
 /*      switch ($status) {
   case 'waitlist':
