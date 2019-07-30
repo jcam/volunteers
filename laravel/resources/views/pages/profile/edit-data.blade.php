@@ -61,7 +61,7 @@ use App\Helpers;
             'value' => (is_null($user->data)) ? '' : $user->data->emergency_phone
         ])
 
-        @include('partials/form/date',
+        @include('partials/form/text',
         [
             'name' => 'birthday',
             'label' => 'Birthday',
@@ -69,6 +69,21 @@ use App\Helpers;
             'help' => 'This will only be used as a part of the event census and at the gate',
             'value' => (is_null($user->data)) ? '' : $user->data->birthday
         ])
+<link rel="stylesheet" href="/css/default.css" id="theme_base">
+<link rel="stylesheet" href="/css/default.date.css" id="theme_date">
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="/js/picker.js"></script>
+<script src="/js/picker.date.js"></script>
+<script src="/js/legacy.js"></script>
+<script type="text/javascript">
+$('#birthday-field').pickadate({
+  format: 'yyyy-mm-dd',
+  selectYears: 100,
+  selectMonths: true,
+  min: new Date(1920,0,1),
+  max: new Date(2019,9,14)
+});
+</script>
 
         <button type="submit" class="btn btn-success">Save Changes</button>
         <a href="/profile" class="btn btn-primary">Cancel</a>
