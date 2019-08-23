@@ -18,6 +18,14 @@
 </p>
 
 <p>
+    The description of the shift is as follows:
+</p>
+
+<p>
+    {{ $shift_description }}
+</p>
+
+<p>
     If you did <b>NOT</b> sign-up for this shift or would like to <b>CANCEL</b> this
     shift, <a href="{{ env('SITE_URL').'/slot/'.$slot->id.'/view' }}">click here</a>.
 </p>

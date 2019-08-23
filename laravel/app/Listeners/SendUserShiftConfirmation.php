@@ -34,6 +34,7 @@ class SendUserShiftConfirmation
             $user_name = $event->change['name'];
             $event_name = $event->slot->schedule->shift->event->name;
             $shift_name = $event->slot->schedule->shift->name;
+            $shift_description = $event->slot->schedule->shift->description;
             $start_date = $event->slot->start_date;
             $start_time = $event->slot->start_date;
             $end_time = $event->slot->end_time;
@@ -44,7 +45,7 @@ class SendUserShiftConfirmation
                 $admin_assigned = $event->change['admin_assigned'];
             }
 
-            $event_data = compact('slot', 'user_email', 'user_name', 'event_name', 'shift_name', 'start_date', 'start_time', 'end_time', 'admin_assigned');
+            $event_data = compact('slot', 'user_email', 'user_name', 'event_name', 'shift_name', 'shift_description', 'start_date', 'start_time', 'end_time', 'admin_assigned');
 
             Mail::send('emails/user-shift-confirmation', $event_data, function ($message) use ($user_email, $user_name, $shift_name)
             {

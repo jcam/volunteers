@@ -17,9 +17,12 @@
         </div>
 
         <h1 class="relative">
-            Viewing Event: {{ $event->name }}
+            {{ $event->name }} 
 
         </h1>
+        @if($event->featured)
+            <h3> Scroll Down For Shifts </h3>
+        @endif
         <hr>
 
         @if($event->image)

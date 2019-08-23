@@ -46,7 +46,7 @@ if($start_date->lt(\Carbon\Carbon::now()))
 
 // If the user doesn't have a ticket, don't let them sign up
 //@if($event->featured) <----- this doesn't work, but we don't want to check ticketing if not featured
-if (!$has_account || ($ticketStatus->status != 'unpaid' && $ticketStatus->status != 'paid'))
+if ((isset($has_account) && !$has_account) || (isset($ticketStatus) && $ticketStatus->status != 'unpaid' && $ticketStatus->status != 'paid'))
 {
     $href = "";
 }

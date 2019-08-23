@@ -43,7 +43,7 @@ class UserController extends Controller
         // Send notification emails
         event(new UserRegistered($user));
 
-        $request->session()->flash('success', ['title' => 'Thanks for registering!', 'message' => "Your account has been created, you are now logged in. Before you can sign up for volunteer shifts you'll need to enter your full name. All other fields are optional."]);
+        $request->session()->flash('success', ['title' => 'Thanks for making an account!', 'message' => "Your account has been created, you are now logged in. Before you can sign up for volunteer shifts you'll need to enter your full name. All other fields are optional. **This does not register you for a ticket! Click the icon top left to go back to the dashboard**"]);
         return redirect('/profile/data/edit');
     }
 
